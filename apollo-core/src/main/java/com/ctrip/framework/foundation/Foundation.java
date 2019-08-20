@@ -6,8 +6,14 @@ import com.ctrip.framework.foundation.spi.ProviderManager;
 import com.ctrip.framework.foundation.spi.provider.ApplicationProvider;
 import com.ctrip.framework.foundation.spi.provider.NetworkProvider;
 import com.ctrip.framework.foundation.spi.provider.ServerProvider;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 
 public abstract class Foundation {
   private static final Logger logger = LoggerFactory.getLogger(Foundation.class);
@@ -26,7 +32,19 @@ public abstract class Foundation {
         // Double locking to make sure only one thread initializes ProviderManager.
         synchronized (lock) {
           if (s_manager == null) {
-            s_manager = ServiceBootstrap.loadFirst(ProviderManager.class);
+            Iterator<ProviderManager> providerManagerIterator = ServiceBootstrap.loadAll(ProviderManager.class);
+            if (providerManagerIterator.hasNext()) {
+                List<ProviderManager> providerManagers = Lists.newArrayList(providerManagerIterator);
+
+                Collections.sort(providerManagers, new Comparator<ProviderManager>() {
+                    @Override
+                    public int compare(ProviderManager o1, ProviderManager o2) {
+                        return Integer.compare(o1.getOrder(), o2.getOrder());
+                    }
+                });
+
+                s_manager = providerManagers.get(0);
+            }
           }
         }
       }

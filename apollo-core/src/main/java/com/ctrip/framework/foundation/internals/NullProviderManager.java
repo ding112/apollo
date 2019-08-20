@@ -20,4 +20,9 @@ public class NullProviderManager implements ProviderManager {
   public String toString() {
     return provider.toString();
   }
+
+  @Override
+  public int getOrder() {
+    return 0;
+  }
 }
