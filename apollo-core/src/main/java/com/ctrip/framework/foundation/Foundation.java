@@ -34,16 +34,14 @@ public abstract class Foundation {
           if (s_manager == null) {
             Iterator<ProviderManager> providerManagerIterator = ServiceBootstrap.loadAll(ProviderManager.class);
             if (providerManagerIterator.hasNext()) {
-                List<ProviderManager> providerManagers = Lists.newArrayList(providerManagerIterator);
-
-                Collections.sort(providerManagers, new Comparator<ProviderManager>() {
-                    @Override
-                    public int compare(ProviderManager o1, ProviderManager o2) {
-                        return Integer.compare(o1.getOrder(), o2.getOrder());
-                    }
-                });
-
-                s_manager = providerManagers.get(0);
+              List<ProviderManager> providerManagers = Lists.newArrayList(providerManagerIterator);
+              Collections.sort(providerManagers, new Comparator<ProviderManager>() {
+                  @Override
+                  public int compare(ProviderManager o1, ProviderManager o2) {
+                      return Integer.compare(o1.getOrder(), o2.getOrder());
+                  }
+              });
+              s_manager = providerManagers.get(0);
             }
           }
         }
