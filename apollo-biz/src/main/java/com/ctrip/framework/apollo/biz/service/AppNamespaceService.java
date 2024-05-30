@@ -1,5 +1,23 @@
+/*
+ * Copyright 2024 Apollo Authors
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
 package com.ctrip.framework.apollo.biz.service;
 
+import com.ctrip.framework.apollo.audit.annotation.ApolloAuditLog;
+import com.ctrip.framework.apollo.audit.annotation.OpType;
 import com.ctrip.framework.apollo.biz.entity.Audit;
 import com.ctrip.framework.apollo.biz.entity.Cluster;
 import com.ctrip.framework.apollo.biz.entity.Namespace;
@@ -56,7 +74,7 @@ public class AppNamespaceService {
   }
 
   public List<AppNamespace> findByAppId(String appId) {
-    return appNamespaceRepository.findByAppId(appId);
+    return appNamespaceRepository.findByAppIdOrderByIdAsc(appId);
   }
 
   public List<AppNamespace> findPublicNamespacesByNames(Set<String> namespaceNames) {
@@ -86,6 +104,7 @@ public class AppNamespaceService {
   }
 
   @Transactional
+  @ApolloAuditLog(type = OpType.CREATE, name = "AppNamespace.createDefault")
   public void createDefaultAppNamespace(String appId, String createBy) {
     if (!isAppNamespaceNameUnique(appId, ConfigConsts.NAMESPACE_APPLICATION)) {
       throw new ServiceException("appnamespace not unique");
